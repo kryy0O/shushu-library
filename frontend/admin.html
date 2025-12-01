@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Shushu</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="admin.css"> </head>
+<body>
+
+    <div class="admin-container">
+        
+        <div class="form-section">
+            <div class="header">
+                <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Home</a>
+                <h2>📚 Add New Book</h2>
+            </div>
+
+            <form id="addBookForm">
+                <div class="input-group">
+                    <label>Book Title</label>
+                    <input type="text" id="title" placeholder="e.g. The Hobbit" required oninput="updatePreview()">
+                </div>
+
+                <div class="row">
+                    <div class="input-group">
+                        <label>Author</label>
+                        <input type="text" id="author" placeholder="J.R.R. Tolkien" required oninput="updatePreview()">
+                    </div>
+                    <div class="input-group">
+                        <label>Category</label>
+                        <select id="category" onchange="updatePreview()">
+                            <option value="Horror">Horror</option>
+                            <option value="Fantasy">Fantasy</option>
+                            <option value="Mystery">Mystery</option>
+                            <option value="Science Fiction">Science Fiction</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Cover Image URL</label>
+                    <input type="text" id="cover" placeholder="Paste image link here..." required oninput="updatePreview()">
+                    <small>Tip: Right click an image on Google -> "Copy Image Address"</small>
+                </div>
+
+
+                <div class="input-group">
+                    <label>PDF File Link</label>
+                    <input type="text" id="pdfUrl" placeholder="e.g. https://example.com/book.pdf">
+                    <small style="color: #f2b705;">*Must be a direct link ending in .pdf</small>
+                </div>
+                <div class="input-group">
+                    <label>Synopsis</label>
+                    <textarea id="synopsis" rows="3" required></textarea>
+                </div>
+                 
+                
+                <div class="row">
+                    <div class="input-group">
+                        <label>Year</label>
+                        <input type="number" id="year" value="2024">
+                    </div>
+                    <div class="input-group">
+                        <label>Stock</label>
+                        <input type="number" id="stock" value="5">
+                    </div>
+                </div>
+
+                <<div style="display: flex; gap: 10px; margin-top: 20px;">
+            <button type="submit" class="submit-btn" style="flex: 2;">
+                <i class="fa-solid fa-save"></i> Save / Update Book
+            </button>
+            
+            <button type="button" id="deleteBtn" style="flex: 1; background: #ff4757; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s;">
+                <i class="fa-solid fa-trash"></i> Delete
+            </button>
+        </div>
+    </form>
+        </div>
+
+        <div class="preview-section">
+            <h3>Live Preview</h3>
+            <p>This is how it will look on the website</p>
+            
+            <div class="card-preview">
+                <div class="book-card">
+                    <img id="preview-img" src="https://via.placeholder.com/150?text=Cover" alt="Book Cover">
+                    <h4 id="preview-title">Book Title</h4>
+                    <span id="preview-author">Author Name</span>
+                    <div class="badge" id="preview-badge">5 left</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>

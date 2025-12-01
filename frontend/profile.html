@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Library - Shushu</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="profile.css">
+</head>
+<body>
+
+    <header class="profile-header">
+        <div class="logo">
+            <a href="index.html" style="text-decoration: none; color: white; display: flex; align-items: center; gap: 10px;">
+                <i class="fa-solid fa-book"></i>
+                <span>Shushu</span>
+            </a>
+        </div>
+        <div class="user-mini-profile">
+            <span id="header-username">User</span>
+            <img id="header-avatar" src="" alt="Avatar">
+        </div>
+    </header>
+
+    <div class="dashboard-container">
+        
+        <aside class="sidebar">
+            <div class="user-info-box">
+                <img id="sidebar-avatar" src="" alt="Profile">
+                <h3 id="sidebar-name">Loading...</h3>
+                <p id="sidebar-email">...</p>
+            </div>
+
+            <nav class="side-nav">
+                <button class="nav-btn active" onclick="switchTab('reading')">
+                    <i class="fa-solid fa-book-open"></i> Reading Now
+                </button>
+                <button class="nav-btn" onclick="switchTab('wishlist')">
+                    <i class="fa-solid fa-heart"></i> Wishlist
+                </button>
+                <button class="nav-btn" onclick="switchTab('borrowed')">
+                    <i class="fa-solid fa-clock"></i> Borrowed History
+                </button>
+                <button class="nav-btn logout-btn" onclick="handleLogout()">
+                    <i class="fa-solid fa-right-from-bracket"></i> Log Out
+                </button>
+            </nav>
+        </aside>
+
+        <main class="content-area">
+            
+            <div id="tab-reading" class="tab-content active">
+                <h2>📖 Reading Now</h2>
+                <div class="book-grid" id="reading-grid"></div>
+            </div>
+
+            <div id="tab-wishlist" class="tab-content">
+                <h2>❤️ My Wishlist</h2>
+                <div class="book-grid" id="wishlist-grid"></div>
+            </div>
+
+            <div id="tab-borrowed" class="tab-content">
+                <h2>⏳ Borrowed Books</h2>
+                <div class="book-grid" id="borrowed-grid"></div>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="profile.js"></script>
+</body>
+</html>

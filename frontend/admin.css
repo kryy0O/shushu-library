@@ -1,0 +1,134 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+
+body {
+    background-color: #1a1a2e;
+    color: white;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.admin-container {
+    display: flex;
+    width: 900px;
+    background-color: #161428;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    border: 1px solid #333;
+}
+
+/* LEFT SIDE form */
+.form-section {
+    flex: 1.5;
+    padding: 40px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.back-btn {
+    text-decoration: none;
+    color: #888;
+    font-size: 14px;
+    transition: 0.3s;
+}
+.back-btn:hover { color: #fff; }
+
+h2 { color: #f2b705; }
+
+.input-group { margin-bottom: 15px; }
+.row { display: flex; gap: 15px; }
+.row .input-group { flex: 1; }
+
+label { display: block; margin-bottom: 5px; font-size: 13px; color: #ccc; }
+small { color: #666; font-size: 11px; }
+
+input, select, textarea {
+    width: 100%;
+    padding: 12px;
+    background: #24213b;
+    border: 1px solid #333;
+    border-radius: 8px;
+    color: white;
+    font-size: 14px;
+    outline: none;
+    transition: 0.3s;
+}
+
+input:focus, textarea:focus {
+    border-color: #f2b705;
+    background: #2a2a45;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, #f2b705, #ffa502);
+    border: none;
+    border-radius: 8px;
+    color: black;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: transform 0.2s;
+}
+
+.submit-btn:hover { transform: scale(1.02); }
+
+/* RIGHT SIDE PREVIEW */
+.preview-section {
+    flex: 1;
+    background: linear-gradient(135deg, #24213b, #1a1a2e);
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border-left: 1px solid #333;
+}
+
+.preview-section h3 { margin-bottom: 10px; }
+.preview-section p { color: #888; font-size: 12px; margin-bottom: 30px; }
+
+/* THE CARD PREVIEW */
+.book-card {
+    background: #161428;
+    padding: 15px;
+    border-radius: 12px;
+    width: 180px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    border: 1px solid #444;
+    position: relative;
+    transition: transform 0.3s;
+}
+
+.book-card:hover { transform: translateY(-5px); border-color: #f2b705; }
+
+.book-card img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.book-card h4 { font-size: 16px; margin: 5px 0; color: white; }
+.book-card span { font-size: 12px; color: #888; }
+
+.badge {
+    position: absolute;
+    top: 10px; right: 10px;
+    background: #00adb5; color: white;
+    padding: 4px 8px; border-radius: 5px;
+    font-size: 10px; font-weight: bold;
+}
