@@ -6,7 +6,9 @@
     <title>Shushu Library</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
-    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Funnel+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -26,7 +28,7 @@
     <nav class="menu">
         <ul>
             <li><a href="#book-carousel">Best Reading</a></li>
-            <li><a href="#borrow-section">Borrow</a></li>
+            <li><a href="#last-carousel">Borrow</a></li>
             <li><a href="#community-section">Community</a></li>
             <li><a href="#shushu-footer">About</a></li>
         </ul>
@@ -41,38 +43,85 @@
             <div class="profile-dropdown-container">
                 <img id="user-avatar" src="" alt="Profile" style="width: 40px; height: 40px; border-radius: 50%; cursor: pointer; border: 2px solid #fff;">
                 <div id="profile-menu" class="profile-menu-content">
-    <a href="profile.html?tab=reading"><i class="fa-solid fa-book-open"></i> Reading Now</a>
-    <a href="profile.html?tab=wishlist"><i class="fa-solid fa-heart"></i> Wishlist</a>
-    <a href="profile.html?tab=borrowed"><i class="fa-solid fa-clock"></i> Borrowed</a>
-    
-    <a href="admin.html" style="color: #f2b705; font-weight: bold;">
-        <i class="fa-solid fa-user-shield"></i> Admin Panel
-    </a>
+                    <a href="profile.html?tab=reading"><i class="fa-solid fa-book-open"></i> Reading Now</a>
+                    <a href="profile.html?tab=wishlist"><i class="fa-solid fa-heart"></i> Favorite</a>
+                    <a href="profile.html?tab=borrowed"><i class="fa-solid fa-clock"></i> Borrowed</a>
+                    
+                    <a href="admin.html" style="color: #f2b705; font-weight: bold;">
+                        <i class="fa-solid fa-user-shield"></i> Admin Panel
+                    </a>
 
-    <hr style="border: 0; border-top: 1px solid #444; margin: 5px 0;">
-    
-    <a href="#" 
-       onclick="event.preventDefault(); localStorage.removeItem('user'); fetch('http://localhost:5000/api/auth/logout', {method: 'POST', credentials: 'include'}).finally(() => window.location.reload());" 
-       style="color: #ff6b6b;">
-       <i class="fa-solid fa-right-from-bracket"></i> Log Out
-    </a>
-</div>
+                    <hr style="border: 0; border-top: 1px solid #444; margin: 5px 0;">
+                    
+                    <a href="#" 
+                    onclick="event.preventDefault(); localStorage.removeItem('user'); fetch('http://localhost:5000/api/auth/logout', {method: 'POST', credentials: 'include'}).finally(() => window.location.reload());" 
+                    style="color: #ff6b6b;">
+                    <i class="fa-solid fa-right-from-bracket"></i> Log Out
+                    </a>
+                </div>
             </div>
         </div>
     </div>
 </header>
-
-<button id="repair-btn" onclick="repairDatabase()">🛠️ CLICK TO FIX MISSING BOOKS</button>
-
 <section id="hero" class="hero">
     <img src="shushu.png" alt="Shushu" class="hero-image">
-    <button class="explore-btn" onclick="document.querySelector('#borrow-section').scrollIntoView({behavior:'smooth'})">Explore More</button>
+    <button class="explore-btn" onclick="document.querySelector('#last-carousel').scrollIntoView({behavior:'smooth'})">Explore More</button>
 </section>
 
 <section id="book-carousel" class="book-carousel">
   <div class="book-track">
     <div class="book-rowing">
-      <img src="picture/img1.png" onerror="this.style.display='none'"><img src="picture/img2.png" onerror="this.style.display='none'"><img src="picture/img3.png" onerror="this.style.display='none'"><img src="picture/img4.png" onerror="this.style.display='none'">
+      <img src="picture/img1.png" alt="Book 1">
+      <img src="picture/img2.png" alt="Book 2">
+      <img src="picture/img3.png" alt="Book 3">
+      <img src="picture/img4.png" alt="Book 4">
+      <img src="picture/img5.png" alt="Book 5">
+      <img src="picture/img6.png" alt="Book 6">
+      <img src="picture/img7.png" alt="Book 7">
+      <img src="picture/img8.png" alt="Book 8">
+      <img src="picture/img9.png" alt="Book 9">
+      <img src="picture/img10.png" alt="Book 10">
+    </div>
+
+    <div class="book-rowing">
+      <img src="picture/img1.png" alt="Book 1">
+      <img src="picture/img2.png" alt="Book 2">
+      <img src="picture/img3.png" alt="Book 3">
+      <img src="picture/img4.png" alt="Book 4">
+      <img src="picture/img5.png" alt="Book 5">
+      <img src="picture/img6.png" alt="Book 6">
+      <img src="picture/img7.png" alt="Book 7">
+      <img src="picture/img8.png" alt="Book 8">
+      <img src="picture/img9.png" alt="Book 9">
+      <img src="picture/img10.png" alt="Book 10">
+    </div>
+  </div>
+
+  <div class="book-track reverse">
+    <div class="book-rowing">
+      <img src="picture/img11.png" alt="Book 11">
+      <img src="picture/img12.png" alt="Book 12">
+      <img src="picture/img13.png" alt="Book 13">
+      <img src="picture/img14.png" alt="Book 14">
+      <img src="picture/img15.png" alt="Book 15">
+      <img src="picture/img16.png" alt="Book 16">
+      <img src="picture/img17.png" alt="Book 17">
+      <img src="picture/img18.png" alt="Book 18">
+      <img src="picture/img19.png" alt="Book 19">
+      <img src="picture/img20.png" alt="Book 20">
+    </div>
+
+    <div class="book-rowing" id="last-carousel">
+      <img src="picture/img11.png" alt="Book 11">
+      <img src="picture/img12.png" alt="Book 12">
+      <img src="picture/img13.png" alt="Book 13">
+      <img src="picture/img14.png" alt="Book 14">
+      <img src="picture/img15.png" alt="Book 15">
+      <img src="picture/img16.png" alt="Book 16">
+      <img src="picture/img17.png" alt="Book 17">
+      <img src="picture/img18.png" alt="Book 18">
+      <img src="picture/img19.png" alt="Book 19">
+      <img src="picture/img20.png" alt="Book 20">
     </div>
   </div>
 </section>
@@ -81,15 +130,25 @@
     <h2 class="section-title" style="margin-top:50px; text-align:center;">Borrow Books</h2>
 
     <div class="search-bar">
-        <input type="text" id="searchInput" placeholder="Search books...">
+        <input type="text" id="searchInput" placeholder="Search books title...">
         <div class="dropdown">
             <button class="dropbtn">Categories</button>
             <div class="dropdown-content">
                 <a href="#" data-category="Horror">Horror</a>
-                <a href="#" data-category="Fantasy">Fantasy</a>
                 <a href="#" data-category="Mystery">Mystery</a>
+                <a href="#" data-category="Fantasy">Fantasy</a>
+                <a href="#" data-category="Science Fiction">Science Fiction</a>
+                <a href="#" data-category="Thriller">Thriller</a>
+                <a href="#" data-category="Romance">Romance</a>
+                <a href="#" data-category="Adventure">Adventure</a>
+                <a href="#" data-category="History">History</a>
+                <a href="#" data-category="Computer Books">Computer Books</a>
+                <a href="#" data-category="Cooking">Cooking</a>
             </div>
         </div>
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <!-- ADD SEARCH RESULTS CONTAINER HERE -->
+        <div id="searchResults"></div>
     </div>
 
     <div class="categories-container">
@@ -114,18 +173,94 @@
                 <div class="book-row" id="mysteryRow"></div> <i class="fa-solid fa-angles-right scroll-icon right-icon"></i>
             </div>
         </div>
+        <div class="category">
+            <h3>Science Fiction</h3>
+            <div class="book-row-wrapper">
+                <i class="fa-solid fa-angles-left scroll-icon left-icon"></i>
+                <div class="book-row" id="scifiRow"></div> <i class="fa-solid fa-angles-right scroll-icon right-icon"></i>
+            </div>
+        </div>
+        <div class="category">
+            <h3>Thriller</h3>
+            <div class="book-row-wrapper">
+                <i class="fa-solid fa-angles-left scroll-icon left-icon"></i>
+                <div class="book-row" id="thrillerRow"></div> <i class="fa-solid fa-angles-right scroll-icon right-icon"></i>
+            </div>
+        </div>
+        <div class="category">
+            <h3>Romance</h3>
+            <div class="book-row-wrapper">
+                <i class="fa-solid fa-angles-left scroll-icon left-icon"></i>
+                <div class="book-row" id="romanceRow"></div> <i class="fa-solid fa-angles-right scroll-icon right-icon"></i>
+            </div>
+        </div>
+        <div class="category">
+            <h3>Adventure</h3>
+            <div class="book-row-wrapper">
+                <i class="fa-solid fa-angles-left scroll-icon left-icon"></i>
+                <div class="book-row" id="adventureRow"></div> <i class="fa-solid fa-angles-right scroll-icon right-icon"></i>
+            </div>
+        </div>
+        <div class="category">
+            <h3>History</h3>
+            <div class="book-row-wrapper">
+                <i class="fa-solid fa-angles-left scroll-icon left-icon"></i>
+                <div class="book-row" id="historyRow"></div> <i class="fa-solid fa-angles-right scroll-icon right-icon"></i>
+            </div>
+        </div>
+        <div class="category">
+            <h3>Computer Books</h3>
+            <div class="book-row-wrapper">
+                <i class="fa-solid fa-angles-left scroll-icon left-icon"></i>
+                <div class="book-row" id="computerRow"></div> <i class="fa-solid fa-angles-right scroll-icon right-icon"></i>
+            </div>
+        </div>
+        <div class="category">
+            <h3>Cooking</h3>
+            <div class="book-row-wrapper">
+                <i class="fa-solid fa-angles-left scroll-icon left-icon"></i>
+                <div class="book-row" id="cookingRow"></div> <i class="fa-solid fa-angles-right scroll-icon right-icon"></i>
+            </div>
+        </div>
     </div>
 </section>
 
 <div id="bookModal" class="book-modal">
     <div class="modal-content">
         <span class="close-modal">&times;</span>
-        <div class="modal-left"><img id="modal-cover" src="" alt="Book Cover"></div>
+        <div class="modal-left">
+            <img id="modal-cover" src="" alt="Book Cover">
+        </div>
         <div class="modal-right">
-            <h2 id="modal-title">Title</h2>
+            <h2 id="modal-title"></h2>
             <p id="modal-author"></p>
-            <p id="modal-rating"></p>
+            <p id="modal-year"></p>
             <p id="modal-synopsis"></p>
+            <div class="rating-section">
+                <div class="rating-header">
+                    <span class="rating-label">Rate this book:</span>
+                    <span id="average-rating-text">0/5.0</span>
+                </div>
+                
+                <div class="stars-container">
+                    <span class="star" data-value="1">☆</span>
+                    <span class="star" data-value="2">☆</span>
+                    <span class="star" data-value="3">☆</span>
+                    <span class="star" data-value="4">☆</span>
+                    <span class="star" data-value="5">☆</span>
+                </div>
+                
+                <div class="rating-messages">
+                    <span id="rating-message">Click stars to rate</span>
+                    <span id="your-rating"></span>
+                </div>
+                
+                <div class="rating-stats">
+                    Total ratings: <span id="total-ratings-count" class="rating-count">0</span>
+                </div>
+            </div>
+            
+            
             <button id="modal-borrow" class="borrow-btn">Borrow Now</button>
         </div>
     </div>
@@ -138,8 +273,20 @@
         <div class="comment-form">
             <input type="text" id="username" placeholder="Your name...">
             <textarea id="commentText" placeholder="Write a comment..."></textarea>
+            
+            <div id="imagePreviewContainer" class="image-preview">
+                <h4>Image Preview</h4>
+                <div class="image-preview-content">
+                    <img id="imagePreview" src="" alt="Preview">
+                    <button type="button" id="removeImage" class="remove-btn">Remove</button>
+                </div>
+            </div>
+            
             <div class="form-bottom">
-                <input type="file" id="commentImage">
+                <label for="commentImage" class="custom-file-upload">
+                    <i class="fas fa-upload"></i> Upload Image
+                </label>
+                <input type="file" id="commentImage" accept="image/*">
                 <button id="postBtn">Post</button>
             </div>
         </div>
@@ -173,8 +320,134 @@
 </style>
 
 <footer id="shushu-footer" class="shushu-footer">
-    <p style="text-align:center;">©2025 Shushu Library.</p>
+    <div class="footer-top">
+
+        <div class="footer-brand">
+            <i class="fa-solid fa-book"></i>
+            <h2>Shushu</h2>
+        </div>
+
+        <div class="footer-links">
+
+            <div class="footer-column">
+                <h3>Community</h3>
+                <a href="#community-section">Share Ideas</a>
+                <a href="#community-section">Comments</a>
+            </div>
+
+            <div class="footer-column">
+                <h3>Explore</h3>
+                <a href="#last-carousel">Find a book</a>
+                <a href="#last-carousel">Discover</a>
+            </div>
+
+            <div class="footer-column">
+                <h3>About</h3>
+                <a href="#footer-bottom-links" onclick="openCompany()">Company</a>
+                <a href="#footer-bottom-links" onclick="openPolicy()">Community Policy</a>
+            </div>
+
+            <div class="footer-column">
+                <h3>Follow us</h3>
+                <div class="social-icons">
+                    <a href="https://www.instagram.com/shushulibrary?igsh=MXB4ZTlocW10MnpzYQ%3D%3D&utm_source=qr" target="_blank">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="https://www.facebook.com/share/1bKriNZYKK/?mibextid=wwXIfr" target="_blank">
+                        <i class="fab fa-facebook"></i>
+                    </a>
+                    <a href="https://www.tiktok.com/@shushu2415?_r=1&_t=ZS-91yJyqWUnY0" target="_blank">
+                        <i class="fab fa-tiktok"></i>
+                    </a>
+                    <a href="https://youtube.com/@shushusmartlibrary?si=bNNgDoyoOWITzP3E" target="_blank">
+                        <i class="fab fa-youtube"></i>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="footer-bottom">
+        <p>©2025 Shushu Library. All rights reserved.</p>
+        <div id="footer-bottom-links" class="footer-bottom-links">
+            <a href="#footer-bottom-links" onclick="openTerms()">Terms & Conditions</a>
+            <a href="#footer-bottom-links" onclick="openSupport()">Support</a>
+        </div>
+    </div>
 </footer>
+
+<!-- TERMS POPUP -->
+<div id="termsModal" class="terms-modal">
+    <div class="terms-modal-content">
+        <span class="terms-close" onclick="closeTerms()">&times;</span>
+        <h3><i class="fa-solid fa-file-contract"></i> Terms & Conditions</h3>
+        <br>
+        <p>
+            By using Shushu Library, you agree to the following:<br><br>
+            <ul>
+                <li>You must provide accurate information when registering.</li>
+                <li>Borrowed e-books are available for a limited time only.</li>
+                <li>Do not share your account or distribute library content illegally.</li>
+                <li>The library is not responsible for data loss due to technical issues.</li>
+                <li>We may update these terms at any time without prior notice.</li>
+            </ul><br>
+            Continued use of the website means you accept the updated terms.
+        </p>
+    </div>
+</div>
+
+<!-- SUPPORT POPUP -->
+<div id="supportModal" class="terms-modal">
+    <div class="terms-modal-content">
+        <span class="terms-close" onclick="closeSupport()">&times;</span>
+        <h3><i class="fa-solid fa-question-circle"></i> Support</h3>
+        <p>
+            Mail: support@shushulibrary.com <br>
+            Hours: Monday to Friday, 9 AM - 5 PM <br>
+            Phone: +886-789-045
+        </p>
+    </div>
+</div>
+
+<div id="companyModal" class="terms-modal">
+    <div class="terms-modal-content">
+        <span class="terms-close" onclick="closeCompany()">&times;</span>
+        <h3><i class="fa-solid fa-circle-info"></i> ShuShu Library Creators</h3>
+        <p>
+            Our team consists of these amazing members:<br>
+            <img src="Creators.jpg" alt="Photo of Creators">
+            <ul>
+                <li>1133529 - Liana</li>
+                <li>1133532 - Gwen</li>
+                <li>1133538 - Rafel</li>
+                <li>1133831 - Moa</li>
+                <li>1133584 - Ryan</li>
+            </ul>
+        </p>
+    </div>
+</div>
+
+<div id="policyModal" class="terms-modal">
+    <div class="terms-modal-content">
+        <span class="terms-close" onclick="closePolicy()">&times;</span>
+        <h3><i class="fa-solid fa-users"></i> Community Policy</h3>
+        <br>
+        <p>
+            Our community is built on respect, learning, and sharing. By using this platform, you agree to:<br><br>
+            <ul>
+                <li>Be respectful to all users.</li>
+                <li>No harassment, hate speech, or harmful content.</li>
+                <li>Do not post illegal, misleading, or copyrighted materials.</li>
+                <li>Keep discussions relevant to books, learning, and the library.</li>
+                <li>Report inappropriate behavior to the admin.</li>
+            </ul><br>
+            We reserve the right to remove content or suspend accounts that violate these rules.
+        </p>
+    </div>
+</div>
 
 <script src="main.js"></script>
 </body>
