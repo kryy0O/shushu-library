@@ -2,7 +2,7 @@
 body {
     background-color: #1a1a2e; /* Darker than main site */
     margin: 0;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Funnel Sans', sans-serif;
     color: white;
 }
 
@@ -45,7 +45,7 @@ body {
 
 .user-info-box {
     text-align: center;
-    margin-bottom: 40px;
+    margin-bottom: 20px;
     padding-bottom: 20px;
     border-bottom: 1px solid #444;
 }
@@ -80,6 +80,7 @@ body {
     align-items: center;
     gap: 15px;
     transition: 0.2s;
+    font-family: 'Funnel Sans', sans-serif;
 }
 
 .nav-btn:hover {
@@ -87,10 +88,20 @@ body {
     color: white;
 }
 
+
 .nav-btn.active {
     background-color: #f2b705;
     color: black;
     font-weight: bold;
+}
+
+.home-nav {
+    color: #f2b705b0;
+}
+
+.home-nav:hover {
+    background-color: rgba(218, 255, 107, 0.119);
+    color:#f2b705b0;
 }
 
 .logout-btn {
@@ -108,6 +119,11 @@ body {
     flex: 1;
     padding: 40px;
     background-color: #1a1a2e;
+}
+
+.content-area h2 {
+    margin-top: 0;
+    margin-bottom: 50px;
 }
 
 /* Tabs Logic */
@@ -181,3 +197,18 @@ body {
 .badge-reading { background: rgba(0, 173, 181, 0.2); color: #00adb5; }
 .badge-wishlist { background: rgba(255, 107, 107, 0.2); color: #ff6b6b; }
 .badge-borrowed { background: rgba(242, 183, 5, 0.2); color: #f2b705; }
+
+/* Button Styles for Profile Actions */
+.profile-book-card button {
+    transition: all 0.2s ease;
+    font-size: 14px;
+}
+
+.profile-book-card button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.profile-book-card button i {
+    font-size: 12px;
+}
