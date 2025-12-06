@@ -1,16 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const Comment = require('../models/Comment');
-const { isAuthenticated } = require('../middleware/auth');
+const mongoose = require('mongoose');
 
-// @route   GET /api/comments
-// @desc    Get all comments
-// @access  Public
+// GET ALL COMMENTS
 router.get('/', async (req, res) => {
     try {
         const comments = await Comment.find()
             .sort({ createdAt: -1 })
-            .populate('userId', 'username')
+            .populate({
+                path: 'userId',
+                select: '_id username'
+            })
             .limit(50);
 
         res.status(200).json({
@@ -27,12 +28,10 @@ router.get('/', async (req, res) => {
     }
 });
 
-// @route   POST /api/comments
-// @desc    Create a new comment
-// @access  Public (guests can comment)
+// CREATE NEW COMMENT
 router.post('/', async (req, res) => {
     try {
-        const { username, text, image } = req.body;
+        const { username, text, image, userId } = req.body;
 
         if (!username || !text) {
             return res.status(400).json({
@@ -47,17 +46,24 @@ router.post('/', async (req, res) => {
             image: image || null
         };
 
-        // If user is logged in, add userId
-        if (req.session && req.session.userId) {
+        if (userId && mongoose.Types.ObjectId.isValid(userId)) {
+            commentData.userId = userId;
+        } else if (req.session && req.session.userId) {
             commentData.userId = req.session.userId;
         }
 
         const comment = await Comment.create(commentData);
+        
+        const populatedComment = await Comment.findById(comment._id)
+            .populate({
+                path: 'userId',
+                select: '_id username'
+            });
 
         res.status(201).json({
             success: true,
             message: 'Comment posted successfully',
-            comment
+            comment: populatedComment
         });
     } catch (error) {
         res.status(500).json({
@@ -68,50 +74,62 @@ router.post('/', async (req, res) => {
     }
 });
 
-// @route   POST /api/comments/:id/like
-// @desc    Like/unlike a comment
-// @access  Private
-router.post('/:id/like', isAuthenticated, async (req, res) => {
+// LIKE/UNLIKE COMMENT
+router.post('/:id/like', async (req, res) => {
     try {
-        const comment = await Comment.findById(req.params.id);
-
+        const { userId } = req.body;
+        const commentId = req.params.id;
+        
+        if (!userId) {
+            return res.status(400).json({
+                success: false,
+                message: 'User ID is required'
+            });
+        }
+        
+        const comment = await Comment.findById(commentId);
+        
         if (!comment) {
             return res.status(404).json({
                 success: false,
                 message: 'Comment not found'
             });
         }
-
-        const userId = req.session.userId;
-        const likeIndex = comment.likes.indexOf(userId);
-
-        if (likeIndex > -1) {
-            // Unlike
-            comment.likes.splice(likeIndex, 1);
+        
+        const userAlreadyLiked = comment.likes.some(
+            likeId => likeId.toString() === userId
+        );
+        
+        if (userAlreadyLiked) {
+            comment.likes = comment.likes.filter(
+                likeId => likeId.toString() !== userId
+            );
         } else {
-            // Like
-            comment.likes.push(userId);
+            comment.likes.push(new mongoose.Types.ObjectId(userId));
         }
-
+        
         await comment.save();
-
+        
+        const currentUserLiked = !userAlreadyLiked;
+        
         res.status(200).json({
             success: true,
-            message: likeIndex > -1 ? 'Comment unliked' : 'Comment liked',
-            likes: comment.likes.length
+            message: userAlreadyLiked ? 'Comment unliked' : 'Comment liked',
+            likes: comment.likes.length,
+            userLiked: currentUserLiked
         });
+        
     } catch (error) {
+        console.error('Like error:', error);
         res.status(500).json({
             success: false,
             message: 'Error liking comment',
-            error: error.message
+            error: process.env.NODE_ENV === 'development' ? error.message : undefined
         });
     }
 });
 
-// @route   POST /api/comments/:id/reply
-// @desc    Reply to a comment
-// @access  Public
+// REPLY TO COMMENT
 router.post('/:id/reply', async (req, res) => {
     try {
         const { username, text } = req.body;
@@ -155,12 +173,20 @@ router.post('/:id/reply', async (req, res) => {
     }
 });
 
-// @route   DELETE /api/comments/:id
-// @desc    Delete a comment
-// @access  Private (own comments only)
-router.delete('/:id', isAuthenticated, async (req, res) => {
+// DELETE COMMENT
+router.delete('/:id', async (req, res) => {
     try {
-        const comment = await Comment.findById(req.params.id);
+        const { userId, username } = req.body;
+        const commentId = req.params.id;
+        
+        if (!userId && !username) {
+            return res.status(400).json({
+                success: false,
+                message: 'User ID or username is required'
+            });
+        }
+        
+        const comment = await Comment.findById(commentId);
 
         if (!comment) {
             return res.status(404).json({
@@ -169,8 +195,17 @@ router.delete('/:id', isAuthenticated, async (req, res) => {
             });
         }
 
-        // Check if user owns the comment
-        if (comment.userId.toString() !== req.session.userId) {
+        let isAuthorized = false;
+        
+        if (comment.userId && userId) {
+            isAuthorized = comment.userId.toString() === userId;
+        }
+        
+        if (!isAuthorized && username && comment.username) {
+            isAuthorized = comment.username === username;
+        }
+        
+        if (!isAuthorized) {
             return res.status(403).json({
                 success: false,
                 message: 'Not authorized to delete this comment'
