@@ -45,7 +45,16 @@ const userSchema = new mongoose.Schema({
         addedAt: { type: Date, default: Date.now }
     }],
 
-    // Inside your UserSchema ...
+    inQueues: [{
+        bookId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Book'
+        },
+        bookTitle: String,
+        position: Number,
+        joinedAt: Date
+    }],
+    
     borrowHistory: [{
         bookTitle: String,
         bookAuthor: String,
