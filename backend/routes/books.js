@@ -91,6 +91,60 @@ router.post('/reading', async (req, res) => {
     }, 'Already reading this!');
 });
 
+router.post('/wishlist/remove', async (req, res) => {
+    try {
+        const { userId, bookTitle } = req.body;
+        
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        const bookIndex = user.wishlist.findIndex(book => book.bookTitle === bookTitle);
+        if (bookIndex === -1) {
+            return res.status(400).json({ success: false, message: 'Book not found in wishlist' });
+        }
+
+        user.wishlist.splice(bookIndex, 1);
+        await user.save();
+        
+        res.json({ 
+            success: true, 
+            message: 'Book removed from favorites' 
+        });
+    } catch (error) {
+        console.error('Error removing from wishlist:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
+router.post('/reading/remove', async (req, res) => {
+    try {
+        const { userId, bookTitle } = req.body;
+        
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        const bookIndex = user.readingList.findIndex(book => book.bookTitle === bookTitle);
+        if (bookIndex === -1) {
+            return res.status(400).json({ success: false, message: 'Book not found in reading list' });
+        }
+
+        user.readingList.splice(bookIndex, 1);
+        await user.save();
+        
+        res.json({ 
+            success: true, 
+            message: 'Book removed from reading list' 
+        });
+    } catch (error) {
+        console.error('Error removing from reading list:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
 // ==========================================
 // 4. GET PROFILE
 // ==========================================
@@ -140,10 +194,13 @@ router.post('/return', async (req, res) => {
         if (book) {
             book.stock = book.stock + 1;
             await book.save();
+            
+            // Process waiting queue if anyone is waiting
+            await processWaitingQueue(book._id);
         }
 
         await user.save();
-        res.json({ success: true, message: 'Returned & Restocked!' });
+        res.json({ success: true, message: 'Returned & Restocked! Queue processed if applicable.' });
 
     } catch (err) {
         console.error(err);
@@ -152,12 +209,12 @@ router.post('/return', async (req, res) => {
 });
 
 // ==========================================
-// 6. GET ALL BOOKS
+// 6. GET ALL BOOKS using sorting method
 // ==========================================
 router.get('/', async (req, res) => {
     try {
-        const books = await Book.find();
-        res.status(200).json({ success: true, count: books.length, data: books });
+        const books = await Book.find().sort({title: 1})
+;        res.status(200).json({ success: true, count: books.length, data: books });
     } catch (err) {
         res.status(400).json({ success: false, message: 'Server Error' });
     }
@@ -273,7 +330,7 @@ router.post('/add', async (req, res) => {
         res.status(500).json({ success: false, message: 'Failed to save book.' });
     }
 });
-// ==========================================
+
 // ==========================================
 // 9. DELETE BOOK (Deletes ALL copies)
 // ==========================================
@@ -293,3 +350,287 @@ router.delete('/delete/:title', async (req, res) => {
         res.status(500).json({ success: false, message: 'Server error' });
     }
 });
+
+// ==========================================
+// 10. CHECK BORROW STATUS (For Read Now button)
+// ==========================================
+router.get('/:bookId/borrow-status/:userId', async (req, res) => {
+    try {
+        const { bookId, userId } = req.params;
+
+        // Find user
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        // Find book to get title
+        const book = await Book.findById(bookId);
+        if (!book) {
+            return res.status(404).json({ success: false, message: 'Book not found' });
+        }
+
+        // Check if user has borrowed this book and hasn't returned it
+        const hasActiveBorrow = user.borrowHistory.some(borrow => 
+            borrow.bookTitle === book.title && 
+            borrow.status === 'borrowed'
+        );
+
+        // Check borrow limit (3 books max)
+        const activeBorrows = user.borrowHistory.filter(
+            borrow => borrow.status === 'borrowed'
+        ).length;
+        
+        const borrowLimit = 3;
+        const canBorrowMore = activeBorrows < borrowLimit;
+
+        return res.json({
+            success: true,
+            hasBorrowed: hasActiveBorrow,
+            canBorrow: canBorrowMore,
+            currentBorrows: activeBorrows,
+            borrowLimit
+        });
+
+    } catch (error) {
+        console.error('Error checking borrow status:', error);
+        return res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// ==========================================
+// 11. JOIN WAITING QUEUE (When book is out of stock)
+// ==========================================
+router.post('/:bookId/join-queue', async (req, res) => {
+    try {
+        const { bookId } = req.params;
+        const { userId, username } = req.body;
+
+        // Find the book
+        const book = await Book.findById(bookId);
+        if (!book) {
+            return res.status(404).json({ success: false, message: 'Book not found' });
+        }
+
+        // Find the user
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        // Check if queue is enabled
+        if (!book.queueEnabled) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Waiting list is not available for this book' 
+            });
+        }
+
+        // Check if user is already in the queue
+        const alreadyInQueue = book.waitingQueue.some(
+            entry => entry.userId.toString() === userId
+        );
+        
+        if (alreadyInQueue) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'You are already in the waiting list' 
+            });
+        }
+
+        // Check if user has already borrowed this book
+        const hasBorrowed = user.borrowHistory.some(
+            borrow => borrow.bookTitle === book.title && borrow.status === 'borrowed'
+        );
+        
+        if (hasBorrowed) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'You already have this book borrowed' 
+            });
+        }
+
+        // Check if queue is full
+        if (book.waitingQueue.length >= book.maxQueueSize) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Waiting list is full. Please try again later.' 
+            });
+        }
+
+        // Calculate position (1-based index)
+        const position = book.waitingQueue.length + 1;
+
+        // Add user to queue (FIFO - First In, First Out)
+        book.waitingQueue.push({
+            userId,
+            username,
+            position,
+            joinedAt: new Date(),
+            notified: false
+        });
+
+        // Update user's inQueues
+        user.inQueues.push({
+            bookId,
+            bookTitle: book.title,
+            position,
+            joinedAt: new Date()
+        });
+
+        await book.save();
+        await user.save();
+
+        res.json({
+            success: true,
+            message: `You have been added to the waiting list. Your position: #${position}`,
+            position,
+            queueLength: book.waitingQueue.length
+        });
+
+    } catch (error) {
+        console.error('Error joining queue:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// ==========================================
+// 12. LEAVE QUEUE
+// ==========================================
+router.post('/:bookId/leave-queue', async (req, res) => {
+    try {
+        const { bookId } = req.params;
+        const { userId } = req.body;
+
+        const book = await Book.findById(bookId);
+        const user = await User.findById(userId);
+
+        if (!book || !user) {
+            return res.status(404).json({ success: false, message: 'Not found' });
+        }
+
+        // Remove user from book's waitingQueue
+        const initialLength = book.waitingQueue.length;
+        book.waitingQueue = book.waitingQueue.filter(
+            entry => entry.userId.toString() !== userId
+        );
+
+        // Remove book from user's inQueues
+        user.inQueues = user.inQueues.filter(
+            queue => queue.bookId.toString() !== bookId
+        );
+
+        // Recalculate positions for remaining users
+        book.waitingQueue.forEach((entry, index) => {
+            entry.position = index + 1;
+        });
+
+        await book.save();
+        await user.save();
+
+        res.json({
+            success: true,
+            message: 'Removed from waiting list',
+            removed: initialLength > book.waitingQueue.length
+        });
+
+    } catch (error) {
+        console.error('Error leaving queue:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// ==========================================
+// 13. GET QUEUE STATUS
+// ==========================================
+router.get('/:bookId/queue-status/:userId', async (req, res) => {
+    try {
+        const { bookId, userId } = req.params;
+
+        const book = await Book.findById(bookId);
+        if (!book) {
+            return res.status(404).json({ success: false, message: 'Book not found' });
+        }
+
+        const userInQueue = book.waitingQueue.find(
+            entry => entry.userId.toString() === userId
+        );
+
+        res.json({
+            success: true,
+            isInQueue: !!userInQueue,
+            position: userInQueue ? userInQueue.position : null,
+            queueLength: book.waitingQueue.length,
+            estimatedWait: userInQueue ? `Approx ${userInQueue.position * 7} days` : null,
+            queueEnabled: book.queueEnabled
+        });
+
+    } catch (error) {
+        console.error('Error getting queue status:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// ==========================================
+// 14. PROCESS QUEUE WHEN BOOK IS RETURNED (AUTO-BORROW)
+// ==========================================
+// This should be called when a book is returned
+async function processWaitingQueue(bookId) {
+    try {
+        const book = await Book.findById(bookId);
+        
+        // If book has stock and queue has people
+        if (book.stock > 0 && book.waitingQueue.length > 0) {
+            // Get the first person in queue (FIFO)
+            const nextInLine = book.waitingQueue[0];
+            
+            // Find the user
+            const user = await User.findById(nextInLine.userId);
+            
+            if (user) {
+                // Auto-borrow to the next person
+                const borrowRecord = {
+                    bookTitle: book.title,
+                    bookAuthor: book.author,
+                    bookCover: book.cover,
+                    status: 'borrowed',
+                    borrowDate: new Date(),
+                    dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
+                };
+                
+                user.borrowHistory.push(borrowRecord);
+                
+                // Remove from queue
+                book.waitingQueue.shift();
+                
+                // Reduce stock
+                book.stock -= 1;
+                
+                // Update positions for remaining queue
+                book.waitingQueue.forEach((entry, index) => {
+                    entry.position = index + 1;
+                });
+                
+                // Remove from user's inQueues
+                user.inQueues = user.inQueues.filter(
+                    queue => queue.bookId.toString() !== bookId.toString()
+                );
+                
+                // Send notification (you can implement email/notification system)
+                nextInLine.notified = true;
+                
+                await book.save();
+                await user.save();
+                
+                console.log(`Auto-borrowed "${book.title}" to ${user.username}`);
+                
+                // Return true if queue was processed
+                return true;
+            }
+        }
+        return false;
+    } catch (error) {
+        console.error('Error processing queue:', error);
+        return false;
+    }
+}
