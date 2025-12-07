@@ -316,7 +316,7 @@ function setupProfileDropdown() {
     
     // 2. DEFINE YOUR ADMINS HERE
     // Add your friends' usernames inside this list!
-    const adminList = ["Ryan67", "FriendName1", "FriendName2"]; 
+    const adminList = ["Ryan67", "FriendName1", "FriendName"]; 
 
     const adminLink = document.querySelector('a[href="admin.html"]');
     
