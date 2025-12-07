@@ -1,4 +1,4 @@
-require('dotenv').config(); // MUST BE THE VERY FIRST LINE
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const session = require('express-session');
@@ -13,46 +13,72 @@ const app = express();
 // Connect to MongoDB
 connectDB();
 
-// Middleware
+// MIDDLEWARE
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
+app.use(cookieParser('shushu-library-dev-secret-123'));
 
-// CORS configuration (Allows your frontend to talk to backend)
+// CORS Configuration
 app.use(cors({
-    origin: process.env.FRONTEND_URL || 'http://127.0.0.1:5500', // Adjust if using different port
+    origin: 'http://127.0.0.1:5500',
     credentials: true
 }));
 
-// Session configuration
+// Custom CORS Headers
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.header('Access-Control-Allow-Origin', 'http://127.0.0.1:5500');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
+    
+    next();
+});
+
+// Session Configuration
 app.use(session({
-    secret: process.env.SESSION_SECRET || 'shushu_secret_key', // Fallback key if .env fails
+    secret: process.env.SESSION_SECRET || 'shushu_secret_key',
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
-        // Tries MONGO_URI first, then MONGO_URL. Make sure .env matches one of these!
-        mongoUrl: process.env.MONGO_URI || process.env.MONGO_URL, 
-        touchAfter: 24 * 3600 // Update session only once every 24 hours
+        mongoUrl: process.env.MONGO_URI || process.env.MONGO_URL,
+        touchAfter: 24 * 3600
     }),
     cookie: {
-        maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+        maxAge: 1000 * 60 * 60 * 24 * 7,
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production', // HTTPS only in production
-        sameSite: 'lax'
+        secure: false,
+        sameSite: 'lax',
+        domain: '127.0.0.1'
     }
 }));
 
-// ==========================================
-// ROUTES (The Map for your API)
-// ==========================================
+// DEBUG ROUTE 
+app.get('/api/debug/cookies', (req, res) => {
+    res.json({
+        cookies: req.cookies,
+        sessionExists: !!req.session,
+        sessionId: req.sessionID,
+        userId: req.session?.userId,
+        headers: {
+            cookie: req.headers.cookie,
+            origin: req.headers.origin
+        }
+    });
+});
+
+// API ROUTES
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/comments', require('./routes/comments'));
 app.use('/api/users', require('./routes/users'));
+app.use('/api/books', require('./routes/books'));
+app.use('/api/search', require('./routes/search'));
+app.use('/api/books', require('./routes/ratings'));
 
-// ✅ CRITICAL ADDITION: This makes Borrow/Wishlist/Reading work!
-app.use('/api/books', require('./routes/books')); 
-
-// Health check route
+// HEALTH CHECK
 app.get('/api/health', (req, res) => {
     res.status(200).json({
         success: true,
@@ -61,7 +87,7 @@ app.get('/api/health', (req, res) => {
     });
 });
 
-// 404 handler (If route doesn't exist)
+// 404 Handler
 app.use((req, res) => {
     res.status(404).json({
         success: false,
@@ -69,7 +95,7 @@ app.use((req, res) => {
     });
 });
 
-// Error handler (If server crashes)
+// Global Error Handler
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).json({
@@ -79,7 +105,7 @@ app.use((err, req, res, next) => {
     });
 });
 
-// Start server
+// START SERVER
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`

@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Library - Shushu</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Funnel+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="profile.css">
@@ -34,14 +37,17 @@
             </div>
 
             <nav class="side-nav">
-                <button class="nav-btn active" onclick="switchTab('reading')">
+                <button class="nav-btn" onclick="switchTab('reading')">
                     <i class="fa-solid fa-book-open"></i> Reading Now
                 </button>
                 <button class="nav-btn" onclick="switchTab('wishlist')">
-                    <i class="fa-solid fa-heart"></i> Wishlist
+                    <i class="fa-solid fa-heart"></i> Favorites
                 </button>
                 <button class="nav-btn" onclick="switchTab('borrowed')">
-                    <i class="fa-solid fa-clock"></i> Borrowed History
+                    <i class="fa-solid fa-clock"></i> Borrowing History
+                </button>
+                <button class="nav-btn home-nav" onclick="window.location.href = 'index.html';">
+                    <i class="fa-solid fa-home"></i> Back to Home
                 </button>
                 <button class="nav-btn logout-btn" onclick="handleLogout()">
                     <i class="fa-solid fa-right-from-bracket"></i> Log Out
@@ -52,22 +58,102 @@
         <main class="content-area">
             
             <div id="tab-reading" class="tab-content active">
-                <h2>📖 Reading Now</h2>
+                <h2>Reading Now</h2>
                 <div class="book-grid" id="reading-grid"></div>
             </div>
 
             <div id="tab-wishlist" class="tab-content">
-                <h2>❤️ My Wishlist</h2>
+                <h2>Favorites</h2>
                 <div class="book-grid" id="wishlist-grid"></div>
             </div>
 
             <div id="tab-borrowed" class="tab-content">
-                <h2>⏳ Borrowed Books</h2>
+                <h2>Borrowed Books</h2>
                 <div class="book-grid" id="borrowed-grid"></div>
             </div>
 
         </main>
     </div>
+
+    <!-- PDF Reader Modal -->
+    <div id="pdfReaderModal" class="reader-modal" style="display: none;">
+        <div class="reader-content">
+            <span class="close-reader" onclick="closeReader()">&times; Close Reader</span>
+            <iframe id="pdfFrame" src="" width="100%" height="100%"></iframe>
+        </div>
+    </div>
+
+    <style>
+        .reader-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 5000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .reader-content {
+            width: 90%;
+            height: 90%;
+            background: #1a1a2e;
+            border-radius: 10px;
+            position: relative;
+            border: 2px solid #f2b705;
+            overflow: hidden;
+        }
+        
+        .close-reader {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            background: #ff4757;
+            padding: 5px 15px;
+            border-radius: 5px;
+            z-index: 10;
+        }
+        
+        iframe {
+            border: none;
+        }
+        
+        .reader-title {
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            color: white;
+            font-weight: bold;
+            z-index: 10;
+            background: rgba(0,0,0,0.5);
+            padding: 5px 15px;
+            border-radius: 5px;
+        }
+    </style>
+
+    <script>
+        function closeReader() {
+            document.getElementById('pdfReaderModal').style.display = "none";
+            document.getElementById('pdfFrame').src = "";
+            
+            // Remove the title
+            const title = document.querySelector('.reader-title');
+            if (title) title.remove();
+        }
+        
+        // Close modal when clicking outside
+        document.getElementById('pdfReaderModal')?.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeReader();
+            }
+        });
+    </script>
 
     <script src="profile.js"></script>
 </body>

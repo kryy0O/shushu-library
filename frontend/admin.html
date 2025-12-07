@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - Shushu</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Funnel+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="admin.css"> </head>
 <body>
@@ -14,7 +17,7 @@
         <div class="form-section">
             <div class="header">
                 <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Home</a>
-                <h2>📚 Add New Book</h2>
+                <h2>📚 Admin Panel</h2>
             </div>
 
             <form id="addBookForm">
@@ -35,6 +38,12 @@
                             <option value="Fantasy">Fantasy</option>
                             <option value="Mystery">Mystery</option>
                             <option value="Science Fiction">Science Fiction</option>
+                            <option value="Thriller">Thriller</option>
+                            <option value="Romance">Romance</option>
+                            <option value="Adventure">Adventure</option>
+                            <option value="History">History</option>
+                            <option value="Computer Books">Computer Books</option>
+                            <option value="Cooking">Cooking</option>
                         </select>
                     </div>
                 </div>
@@ -42,7 +51,7 @@
                 <div class="input-group">
                     <label>Cover Image URL</label>
                     <input type="text" id="cover" placeholder="Paste image link here..." required oninput="updatePreview()">
-                    <small>Tip: Right click an image on Google -> "Copy Image Address"</small>
+                    <small>Tip: Right click an image on Google &#8594; "Copy Image Address"</small>
                 </div>
 
 
@@ -68,9 +77,9 @@
                     </div>
                 </div>
 
-                <<div style="display: flex; gap: 10px; margin-top: 20px;">
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
             <button type="submit" class="submit-btn" style="flex: 2;">
-                <i class="fa-solid fa-save"></i> Save / Update Book
+                <i class="fa-solid fa-plus"></i> Update / Add Book to Library
             </button>
             
             <button type="button" id="deleteBtn" style="flex: 1; background: #ff4757; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s;">

@@ -66,7 +66,7 @@ document.getElementById('addBookForm').addEventListener('submit', async (e) => {
     } catch (err) {
         Swal.fire('Error', 'Server connection failed', 'error');
     } finally {
-        btn.innerHTML = '<i class="fa-solid fa-plus"></i> Add to Library';
+        btn.innerHTML = '<i class="fa-solid fa-plus"></i> Update / Add Book to Library';
         btn.disabled = false;
     }
 });

@@ -107,15 +107,36 @@ router.post('/login', async (req, res) => {
             email: user.email
         };
 
-        res.status(200).json({
-            success: true,
-            message: 'Login successful',
-            user: {
-                id: user._id,
-                username: user.username,
-                email: user.email
+        // Save session and manually set cookie
+        req.session.save((err) => {
+            if (err) {
+                console.error('Session save error:', err);
+                return res.status(500).json({ 
+                    success: false, 
+                    message: 'Session error' 
+                });
             }
-        });
+            
+            // Manually set the cookie with proper domain
+            res.cookie('connect.sid', req.sessionID, {
+                maxAge: 1000 * 60 * 60 * 24 * 7,
+                httpOnly: true,
+                secure: false,
+                sameSite: 'lax',
+                domain: '127.0.0.1'  // This matches your frontend
+            });
+            
+            res.json({
+                success: true,
+                message: 'Login successful',
+                user: {
+                    id: user._id,
+                    username: user.username,
+                    email: user.email
+                }
+            });
+        });  
+        
     } catch (error) {
         console.error('Login error:', error);
         res.status(500).json({
